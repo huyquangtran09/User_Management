@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Management</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Quản Lý Người Dùng</h1>
+      </div>
+      <div class="content">
+        <!-- Removed form section and added button to open dialog -->
+        <div class="form-section">
+          <!-- Tìm kiếm -->
+          <div class="search-section">
+            <input
+              type="text"
+              id="search-input"
+              class="search-input"
+              placeholder="🔍 Tìm kiếm theo tên hoặc email..."
+            />
+          </div>
+          <div>
+            <button class="btn btn-primary" id="add-user-btn">
+              Thêm Người Dùng Mới
+            </button>
+          </div>
+        </div>
+
+        <!-- Danh sách người dùng -->
+        <div id="users-container">
+          <div id="empty-state">
+            <div class="empty-state">
+              <h3>Chưa có người dùng nào</h3>
+              <p>Hãy thêm người dùng đầu tiên của bạn!</p>
+            </div>
+          </div>
+          <div id="users-grid" class="users-grid"></div>
+        </div>
+      </div>
+      <dialog id="user-dialog" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 id="dialog-title">Create User</h2>
+            <button class="close-btn" onclick="closeUserDialog()">×</button>
+          </div>
+          <form id="user-form">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="name">Họ và Tên *</label>
+                <input spellcheck="false" type="text" id="name" name="name" />
+                <div class="error-message" id="name-error"></div>
+              </div>
+              <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required="" />
+                <div class="error-message" id="email-error"></div>
+              </div>
+              <div class="form-group">
+                <label for="phone">Số Điện Thoại *</label>
+                <input type="tel" id="phone" name="phone" required="" />
+                <div class="error-message" id="phone-error"></div>
+              </div>
+            </div>
+            <div
+              style="
+                display: flex;
+                gap: 10px;
+                margin-top: 20px;
+                justify-content: flex-end;
+              "
+            >
+              <button type="submit" class="btn btn-primary" id="submit-btn">
+                Create User
+              </button>
+              <button type="button" class="btn btn-secondary" id="cancel-btn">
+                Hủy
+              </button>
+            </div>
+          </form>
+        </div>
+      </dialog>
+      <dialog id="delete-modal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Xác Nhận Xóa</h2>
+            <button class="close-btn" onclick="closeDeleteModal()">×</button>
+          </div>
+          <p style="color: #94a3b8">
+            Bạn có chắc chắn muốn xóa người dùng này không?
+          </p>
+          <div
+            style="
+              display: flex;
+              gap: 10px;
+              margin-top: 20px;
+              justify-content: flex-end;
+            "
+          >
+            <button class="btn btn-danger" id="confirm-delete">Xóa</button>
+            <button class="btn btn-secondary" onclick="closeDeleteModal()">
+              Hủy
+            </button>
+          </div>
+        </div>
+      </dialog>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
