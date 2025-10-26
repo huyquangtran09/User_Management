@@ -14,6 +14,7 @@ const phoneError = document.getElementById("phone-error");
 const usersGrid = document.getElementById("users-grid");
 const emptyState = document.getElementById("empty-state");
 const searchInput = document.getElementById("search-input");
+const userNotFound = document.getElementById("user-notFound");
 
 // Thêm sự kiện click cho nút "Thêm Người Dùng Mới"
 addUserBtn.addEventListener("click", () => {
@@ -22,6 +23,7 @@ addUserBtn.addEventListener("click", () => {
 
 //Tạo mảng dữ liệu người dùng
 let users = [];
+let filteredUsers = [];
 
 //tải dữ liệu người dùng khi trang được tải
 window.addEventListener("load", () => {
@@ -111,16 +113,31 @@ function renderUserList() {
 
   //Lọc người dùng theo từ khóa tìm kiếm
   const query = searchInput.value.toLowerCase();
-  const filteredUsers = users.filter((user) =>
+  filteredUsers = users.filter((user) =>
     user.name.toLowerCase().includes(query)
   );
-  //if user array is empty, show empty state
-  if (filteredUsers.length === 0) {
-    emptyState.style.display = "block";
-    emptyState.textContent = `Không có người dùng nào với từ khóa "${query}".`;
+  //nếu users rỗng, hiển thị trạng thái trống
+  if (users.length === 0) {
+    if (filteredUsers.length === 0) {
+      emptyState.style.display = "block";
+    } else {
+      emptyState.style.display = "none";
+    }
   } else {
-    emptyState.style.display = "none";
+    if (filteredUsers.length === 0) {
+      userNotFound.style.display = "block";
+      userNotFound.textContent = `Không có người dùng nào với từ khóa "${query}".`;
+    } else {
+      userNotFound.style.display = "none";
+      emptyState.style.display = "none";
+    }
   }
+
+  // nếu query rông=> filteredUsers = users
+  if (query === "") {
+    filteredUsers = users;
+  }
+  //if user array is empty, show empty state
 
   // Hiển thị danh sách người dùng
   filteredUsers.forEach((user) => {
