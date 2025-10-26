@@ -1,3 +1,5 @@
+// tạo cờ
+let isEditing = null;
 //Tạo tên biến cho nút "Thêm Người Dùng Mới"
 const addUserBtn = document.getElementById("add-user-btn");
 const userDialog = document.getElementById("user-dialog");
@@ -11,6 +13,7 @@ const nameError = document.getElementById("name-error");
 const phoneError = document.getElementById("phone-error");
 const usersGrid = document.getElementById("users-grid");
 const emptyState = document.getElementById("empty-state");
+const searchInput = document.getElementById("search-input");
 
 // Thêm sự kiện click cho nút "Thêm Người Dùng Mới"
 addUserBtn.addEventListener("click", () => {
@@ -68,16 +71,28 @@ userForm.addEventListener("submit", (event) => {
     phoneError.style.display = "block";
   }
 
-  //tạo đối tượng người dùng mới
-  const newUser = {
-    id: Date.now(), //sử dụng timestamp làm id duy nhất
-    name: name,
-    email: email,
-    phone: phone,
-  };
-  //thêm người dùng mới vào mảng users
-  users.push(newUser);
-  console.log("Người dùng mới đã được thêm:", newUser);
+  //nếu editingUserId là true thì cập nhật người dùng
+  //nếu không thì thêm người dùng mới
+  if (editingUserId) {
+    //sửa user không dùng index mà dùng id
+    const user = users.find((user) => user.id === editingUserId);
+    if (user) {
+      user.name = name;
+      user.email = email;
+      user.phone = phone;
+    }
+    isEditing = null; //đặt lại cờ sau khi sửa xong
+  }
+  if (!editingUserId) {
+    //thêm mới user
+    const newUser = {
+      id: Date.now(), //sử dụng timestamp làm id duy nhất
+      name: name,
+      email: email,
+      phone: phone,
+    };
+    users.push(newUser);
+  }
 
   //lưu trữ mảng users vào localStorage
   localStorage.setItem("users", JSON.stringify(users));
@@ -94,8 +109,21 @@ function renderUserList() {
   // Xóa nội dung hiện tại trong lưới người dùng
   usersGrid.innerHTML = "";
 
+  //Lọc người dùng theo từ khóa tìm kiếm
+  const query = searchInput.value.toLowerCase();
+  const filteredUsers = users.filter((user) =>
+    user.name.toLowerCase().includes(query)
+  );
+  //if user array is empty, show empty state
+  if (filteredUsers.length === 0) {
+    emptyState.style.display = "block";
+    emptyState.textContent = `Không có người dùng nào với từ khóa "${query}".`;
+  } else {
+    emptyState.style.display = "none";
+  }
+
   // Hiển thị danh sách người dùng
-  users.forEach((user) => {
+  filteredUsers.forEach((user) => {
     const userCard = document.createElement("div");
     userCard.classList.add("user-card");
     userCard.innerHTML = `
@@ -103,8 +131,8 @@ function renderUserList() {
       <div class="user-detail"><strong>Email:</strong> ${user.email}</div>
       <div class="user-detail"><strong>Điện thoại:</strong> ${user.phone}</div>
       <div class="user-actions">
-        <button class="btn btn-edit" onclick="editUser(${user.id})">Sửa</button>
-        <button class="btn btn-danger" onclick="confirmDelete(${user.id})">Xóa</button>
+        <button class="btn btn-edit" onclick="editUser(${user.id})">Edit</button>
+        <button class="btn btn-danger" onclick="confirmDelete(${user.id})">Delete</button>
       </div>
     `;
     usersGrid.appendChild(userCard);
@@ -141,24 +169,11 @@ function editUser(userId) {
   userForm.onsubmit = (event) => {
     event.preventDefault();
 
-    // Lấy thông tin đã sửa từ form
-    const updatedUser = {
-      id: user.id,
-      name: nameInput.value,
-      email: emailInput.value,
-      phone: phoneInput.value,
-    };
-
-    // Cập nhật thông tin người dùng trong mảng users
-    users = users.map((user) => (user.id === userId ? updatedUser : user));
-
-    // Cập nhật localStorage
-    localStorage.setItem("users", JSON.stringify(users));
-
-    // Cập nhật giao diện
-    renderUserList();
-
-    // Đóng dialog
-    userDialog.close();
+    //if (editingUserId !== null) {
   };
 }
+
+// lắng nghe sự kiện input trên ô tìm kiếm
+searchInput.addEventListener("input", () => {
+  renderUserList();
+});
